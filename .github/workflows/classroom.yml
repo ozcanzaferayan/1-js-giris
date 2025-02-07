@@ -1,0 +1,80 @@
+name: Autograding Tests
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: test:variable
+        id: test-variable
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test:variable
+          setup-command: npm install
+          command: npm run test:variables
+          timeout: 10
+          max-score: 20
+
+      - name: test:numbers
+        id: test-numbers
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test:numbers
+          setup-command: npm install
+          command: npm run test:numbers
+          timeout: 10
+          max-score: 20
+
+      - name: test:arrays
+        id: test-arrays
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test:arrays
+          setup-command: npm install
+          command: npm run test:arrays
+          timeout: 10
+          max-score: 20
+
+      - name: test:objects
+        id: test-objects
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test:objects
+          setup-command: npm install
+          command: npm run test:objects
+          timeout: 10
+          max-score: 20
+
+      - name: test:strings
+        id: test-strings
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test:strings
+          setup-command: npm install
+          command: npm run test:strings
+          timeout: 10
+          max-score: 20
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          TEST-VARIABLE_RESULTS: "${{steps.test-variable.outputs.result}}"
+          TEST-NUMBERS_RESULTS: "${{steps.test-numbers.outputs.result}}"
+          TEST-ARRAYS_RESULTS: "${{steps.test-arrays.outputs.result}}"
+          TEST-OBJECTS_RESULTS: "${{steps.test-objects.outputs.result}}"
+          TEST-STRINGS_RESULTS: "${{steps.test-strings.outputs.result}}"
+        with:
+          runners: test-variable,test-numbers,test-arrays,test-objects,test-strings
